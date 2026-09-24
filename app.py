@@ -39,13 +39,16 @@ RTC_CONFIGURATION = RTCConfiguration(
 # MediaPipe model and its own rotation degree state.
 class DoctorStrangeProcessor(VideoProcessorBase):
     def __init__(self):
-        self.hands = mp.solutions.hands.Hands(
-            min_detection_confidence=0.5,
-            min_tracking_confidence=0.5
-        )
+        self.hands = None
         self.deg = 0
 
     def recv(self, frame: av.VideoFrame) -> av.VideoFrame:
+        if self.hands is None:
+            self.hands = mp.solutions.hands.Hands(
+                min_detection_confidence=0.5,
+                min_tracking_confidence=0.5
+            )
+
         img = frame.to_ndarray(format="bgr24")
         img = cv.flip(img, 1)
 
